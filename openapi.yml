@@ -26,10 +26,12 @@ components:
       properties:
         status:
           type: string
+
     CandidateList:
       type: array
       items:
-        $ref: "#/components/schemas/user"
+        $ref: "#/components/schemas/candidate"
+
     Error:
       type: object
       required:
@@ -41,6 +43,7 @@ components:
           format: int32
         message:
           type: string
+
     FSO:
       type: object
       allof:
@@ -53,12 +56,31 @@ components:
           items:
             allof:
               - $ref: '#/components/schemas/candidate'
+
     Project:
       type: object
       required:
         - fulfillmentDate
-        - Priority
+        - priority
       properties:
+        fulfillmentDate:
+          type: string
+          pattern: /([0-9]{4})-(?:[0-9]{2})-([0-9]{2})/
+          example: "2019-05-17"
+        priority:
+        certs:
+        clearance:
+
+    RFI:
+      type: object
+      required:
+      properties:
+        status:
+        createdByUserId:
+        requirements:
+        projects:
+        associatedFSOs:
+
     User:
       type: "object"
       anyOf:
