@@ -1,0 +1,243 @@
+openapi: 3.0.3
+info:
+  title: Clearance Management Portal API
+  description: Handle relationship and data between FSO and rest of company
+  version: 0.0.1
+
+servers:
+  - url: https://portal.hunterstrategy.net/{basepath}
+    description: primary interface
+    variables: 
+      basepath: 
+        default: v1
+
+tags:
+  - name: user
+    description: Calls that CRUD users
+    
+components:
+  schemas:
+    Candidate:
+      type: object
+      allof:
+        $ref: "#/components/schemas/user"
+      required:
+        - status
+      properties:
+        status:
+          type: string
+    CandidateList:
+      type: array
+      items:
+        $ref: "#/components/schemas/user"
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    FSO:
+      type: object
+      allof:
+        $ref: "#/components/schemas/user"
+      required:
+        - candidateList
+      properties:
+        candidateList:
+          type: array
+          items:
+            allof:
+              - $ref: '#/components/schemas/candidate'
+    Project:
+      type: object
+      required:
+        - fulfillmentDate
+        - Priority
+      properties:
+    User:
+      type: "object"
+      anyOf:
+        - $ref: "#/compenents/schemas/fso"
+        - $ref: "#/compenents/schemas/recruiter"
+        - $ref: "#/compenents/schemas/candidate"
+        - $ref: "#/compenents/schemas/projectManager"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+        username:
+          type: "string"
+        firstName:
+          type: "string"
+        lastName:
+          type: "string"
+        email:
+          type: "string"
+        password:
+          type: "string"
+        phone:
+          type: "string"
+        roles:
+          type: array
+        userStatus:
+          type: "integer"
+          format: "int32"
+          description: "User Status"
+      required:
+        - username
+        - firstName
+        - lastName
+        - email
+        - roles
+        - userStatus
+
+paths:
+  /user:
+    post:
+      tags:
+      - user
+      summary: Create user
+      description: This can only be done by the logged in user.
+      operationId: createUser
+      parameters:
+        user:
+          $ref: '#/components/schemas/User'
+      responses:
+        default:
+          description: User successfully created
+    get:
+      tags:
+        - user
+      summary: Get User by Id
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A user with that Id is being returned
+        '404':
+          description: A user with that Id does not exsist
+        '400':
+          description: bad request
+    put:
+        tags:
+          - user
+        summary: Stores a new user in AWS 
+        parameters:
+          - name: userId
+            in: path
+            required: true
+            schema:
+              type: string
+        responses:
+          '200':
+            description: user is sent and stored in database successfully
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    type: string
+          '404':
+            description: database not found
+                  
+
+
+  
+  /user/{userId}/delete:
+    delete:
+      tags:
+        - user
+      summary: Deletes user from database
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User successfully deleted from database
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+
+  /user/{userId}/update/:
+    put:
+      tags:
+        - user
+      summary: updates users with...
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: firstName
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: lastName
+          in: query
+          required: true
+          schema: 
+            type: string
+        - name: middleInitial
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: age
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: DOB
+          in: query
+          required: false
+          schema: 
+            type: string
+        - name: emergencyContact
+          in: query
+          required: true
+          schema:
+            type: object 
+      responses:
+        '200':
+          description: That user had been updated
+        '404':
+          description: A user with that Id does not exsist
+        '400':
+          description: bad request
+  
+  /user/{userId}/updateCalendar:
+    put:
+      tags:
+        - user
+      summary: updates a users clearence timeline
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+              type: string
+      responses:
+        '200':
+          description: That users calendar has been updated
+        '404':
+          description: A user with that Id does not exsist
+        '400':
+          description: bad request
+          
