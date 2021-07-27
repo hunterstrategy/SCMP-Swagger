@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Clearance Management Portal API
-  description: Handle relationship and data between FSO and rest of company
+  description: Handle relationship and data between FSO and rest of compan
   version: 0.0.3
 
 servers:
