@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
   title: Clearance Management Portal API
   description: Handle relationship and data between FSO and rest of company
-  version: 0.0.1
+  version: 0.0.2
 
 servers:
   - url: https://portal.hunterstrategy.net/{basepath}
